@@ -22,8 +22,9 @@ struct OptionalPromise {
         return ReturnObject(*this);
     }
 
+    template<typename U>
     struct Awaitable {
-        Awaitable(const std::optional<T>& optional) : optional_(optional) {}
+        Awaitable(const std::optional<U>& optional) : optional_(optional) {}
         bool await_ready() {
             return false;
         }
@@ -33,10 +34,11 @@ struct OptionalPromise {
         auto await_resume() {
             return optional_.value();
         }
-        const std::optional<T>& optional_;
+        const std::optional<U>& optional_;
     };
-    auto await_transform(const std::optional<T>& optional) {
-        return Awaitable(optional);
+    template<typename U>
+    auto await_transform(const std::optional<U>& optional) {
+        return Awaitable<U>(optional);
     }
 
     template<typename U>
